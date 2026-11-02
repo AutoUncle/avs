@@ -67,8 +67,7 @@ Brand ─ (Series) ─ Model ─ Generation ─ Phase (launch / facelift)
 ```bash
 pipx run check-jsonschema --check-metaschema schema/avs.schema.json
 pipx run check-jsonschema --schemafile schema/avs.schema.json examples/*.json
-# each of these must fail:
-for f in tests/invalid/*.json; do pipx run check-jsonschema --schemafile schema/avs.schema.json "$f" && echo "accepted: $f"; done
+scripts/check-invalid.sh   # every tests/invalid/*.json must be rejected
 ```
 
 CI runs all three on every push and pull request.
