@@ -1,2 +1,15 @@
 .DS_Store
 .venv/
+node_modules/
+packages/npm/dist/
+packages/ruby/Gemfile.lock
+*.gem
+/vendor/
+/composer.lock
+.phpunit.cache/
+packages/python/.venv/
+packages/python/dist/
+packages/java/target/
+packages/dotnet/**/bin/
+packages/dotnet/**/obj/
+.phpunit.result.cache

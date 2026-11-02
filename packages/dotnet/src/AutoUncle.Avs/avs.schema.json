@@ -1,0 +1,1424 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schema.autouncle.com/avs/0.2/avs.schema.json",
+  "title": "AVS – AutoUncle Vehicle Schema",
+  "description": "Draft 0.2. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.",
+  "type": "object",
+  "required": [
+    "avs",
+    "identity"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "avs": {
+      "$ref": "#/$defs/Envelope"
+    },
+    "identity": {
+      "$ref": "#/$defs/Identity"
+    },
+    "specification": {
+      "$ref": "#/$defs/Specification"
+    },
+    "equipment": {
+      "$ref": "#/$defs/Equipment"
+    },
+    "vehicle": {
+      "$ref": "#/$defs/Vehicle"
+    },
+    "extensions": {
+      "description": "Vendor-specific data that has no AVS field yet. Keys are reverse-DNS namespaces, e.g. `com.autouncle`, `de.mobile`.",
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z0-9]+(\\.[a-z0-9-]+)+$"
+      }
+    }
+  },
+  "$defs": {
+    "Envelope": {
+      "description": "Document metadata.",
+      "type": "object",
+      "required": [
+        "version",
+        "kind"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "const": "0.2"
+        },
+        "kind": {
+          "description": "`type` = a car type as built (no physical car). `vehicle` = one physical car, so the `vehicle` block is required. Fields that only make sense for one kind are rejected in the other.",
+          "enum": [
+            "type",
+            "vehicle"
+          ]
+        },
+        "id": {
+          "description": "Stable id of this document, if the producer has one.",
+          "type": "string"
+        },
+        "locale": {
+          "description": "Language of free-text names (BCP 47).",
+          "type": "string",
+          "examples": [
+            "da-DK"
+          ]
+        }
+      }
+    },
+    "Identity": {
+      "description": "Where the car sits in the catalogue: brand → series → model → generation → phase → body → drivetrain, plus the configuration that pairs a body with a drivetrain. Generation, body and drivetrain are independent facts: one drivetrain is shared by every body it was sold in. Only brand and model are required; levels that are not known are left out.",
+      "type": "object",
+      "required": [
+        "brand",
+        "model"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "brand": {
+          "$ref": "#/$defs/CatalogueRef",
+          "unevaluatedProperties": false
+        },
+        "series": {
+          "$ref": "#/$defs/CatalogueRef",
+          "description": "Optional brand grouping, e.g. BMW 'i'.",
+          "unevaluatedProperties": false
+        },
+        "model": {
+          "$ref": "#/$defs/CatalogueRef",
+          "unevaluatedProperties": false
+        },
+        "generation": {
+          "description": "A generation of the model, e.g. 'Golf VII' or 'G20/G21', with an envelope year range covering all its bodies. Holds no body or engine data.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/CatalogueRef"
+            }
+          ],
+          "properties": {
+            "code": {
+              "description": "Manufacturer chassis/generation code.",
+              "type": "string",
+              "examples": [
+                "G20",
+                "Mk7",
+                "W206"
+              ]
+            },
+            "fromYear": {
+              "type": "integer",
+              "minimum": 1940
+            },
+            "toYear": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1940,
+              "description": "null = still in production."
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "phase": {
+          "description": "Production phase within the generation: the launch version or a facelift (BMW 'LCI', Mercedes 'Mopf'). Facelifts change looks, equipment and often engines, and they move prices, so they get their own level instead of being a new generation.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/CatalogueRef"
+            }
+          ],
+          "properties": {
+            "kind": {
+              "enum": [
+                "launch",
+                "facelift"
+              ]
+            },
+            "index": {
+              "description": "0 = launch, 1 = first facelift, …",
+              "type": "integer",
+              "minimum": 0
+            },
+            "fromYear": {
+              "type": "integer",
+              "minimum": 1940
+            },
+            "toYear": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1940
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "body": {
+          "description": "One body style of the generation with its own production years, e.g. 'Golf VII Variant' or 'Transporter T6 Panel Van L2H1'. Everything that is about the shell lives here: type, doors, length, roof, cab.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/CatalogueRef"
+            }
+          ],
+          "properties": {
+            "type": {
+              "$ref": "#/$defs/BodyType"
+            },
+            "doors": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "oemName": {
+              "description": "The manufacturer's own body name.",
+              "type": "string",
+              "examples": [
+                "Touring",
+                "Variant",
+                "Sportback",
+                "Shooting Brake"
+              ]
+            },
+            "lengthClass": {
+              "description": "Van/MPV length with OEM token.",
+              "type": "string",
+              "examples": [
+                "L1",
+                "L2",
+                "L3"
+              ]
+            },
+            "roofClass": {
+              "description": "Van roof height with OEM token.",
+              "type": "string",
+              "examples": [
+                "H1",
+                "H2"
+              ]
+            },
+            "cabType": {
+              "type": "string",
+              "examples": [
+                "single",
+                "double",
+                "extended"
+              ]
+            },
+            "vanBody": {
+              "enum": [
+                "panel_van",
+                "kombi",
+                "crew_van",
+                "bus",
+                "chassis_cab"
+              ]
+            },
+            "fromYear": {
+              "type": "integer",
+              "minimum": 1940
+            },
+            "toYear": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": 1940
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "drivetrain": {
+          "description": "One technical spec (engine code, energy, displacement, power, torque, gearbox, gears, traction, battery, emission standard), shared by every body it was sold in. Two drivetrains differ only if the spec differs, so name tokens (OPF, ACT), trims and seats never create a new one.",
+          "$ref": "#/$defs/CatalogueRef",
+          "unevaluatedProperties": false
+        },
+        "configuration": {
+          "description": "The pairing of this body with this drivetrain as it was actually sold. It is the most precise car-type identity and owns what depends on both: seat count, official consumption, CO2 and electric range.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/CatalogueRef"
+            }
+          ],
+          "properties": {
+            "seats": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            }
+          },
+          "unevaluatedProperties": false
+        },
+        "typeApproval": {
+          "description": "The official EU identity of the car type (Reg. 2018/858, printed on the Certificate of Conformity and carried in national registers). Type/Variant/Version (TVV) is legal-centric, not trim-centric, so it sits beside the catalogue hierarchy rather than replacing it.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "number": {
+              "type": "string",
+              "examples": [
+                "e1*2007/46*1832*12"
+              ]
+            },
+            "type": {
+              "type": "string"
+            },
+            "variant": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "category": {
+              "description": "UNECE vehicle category.",
+              "type": "string",
+              "examples": [
+                "M1",
+                "N1"
+              ]
+            }
+          }
+        },
+        "externalIds": {
+          "description": "The same car type in other code systems. Lets AVS be a hub between them.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ExternalId"
+          }
+        }
+      }
+    },
+    "CatalogueRef": {
+      "description": "A pointer to one catalogue record plus a human-readable name. Left open so that levels can extend it; every place that uses it closes it with `unevaluatedProperties: false`, so unknown keys are rejected.",
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "id": {
+          "description": "Stable, never-reused id of the catalogue record. Should resolve as a URI (e.g. https://avs.autouncle.com/id/<id>). Records merged into another keep redirecting to it.",
+          "type": "string",
+          "examples": [
+            "b-example0001",
+            "dv-example0001"
+          ]
+        },
+        "name": {
+          "description": "Canonical name.",
+          "type": "string"
+        },
+        "localNames": {
+          "description": "Market-specific names, keyed by ISO 3166-1 alpha-2 country.",
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Z]{2}$"
+          },
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ExternalId": {
+      "type": "object",
+      "required": [
+        "scheme",
+        "value"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "scheme": {
+          "description": "Code system. Open list; well-known values shown.",
+          "type": "string",
+          "examples": [
+            "kba-hsn-tsn",
+            "type-approval",
+            "jato",
+            "eurotax",
+            "dat-europa-code",
+            "schwacke",
+            "tecdoc-ktype",
+            "cap-hpi",
+            "autodata-net",
+            "nhtsa-vpic",
+            "wikidata"
+          ]
+        },
+        "value": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$"
+        }
+      }
+    },
+    "Specification": {
+      "description": "Technical facts about the car type. Units are always in the field name (kW, Nm, mm, kg, kWh, g/km) so there is never a unit field to look up.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "body": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "$ref": "#/$defs/BodyType"
+            },
+            "doors": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 6
+            },
+            "seats": {
+              "description": "Seat count of this configuration. An optional extra seat row is equipment.",
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9
+            },
+            "driveSide": {
+              "enum": [
+                "left",
+                "right"
+              ]
+            }
+          }
+        },
+        "powertrain": {
+          "$ref": "#/$defs/Powertrain"
+        },
+        "battery": {
+          "$ref": "#/$defs/Battery"
+        },
+        "performance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "zeroTo100KmhS": {
+              "type": "number",
+              "minimum": 0
+            },
+            "topSpeedKmh": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "efficiency": {
+          "description": "Official consumption/emissions under one test cycle. Repeat the block when a car has several (e.g. NEDC and WLTP). Values belong to the body + drivetrain pairing (an estate burns more than the sedan with the same engine) and fall back to the drivetrain's value.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Efficiency"
+          }
+        },
+        "realWorldRange": {
+          "description": "Measured or modelled real-world EV range, as opposed to the official cycle value.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "cityKm": {
+              "type": "integer"
+            },
+            "highwayKm": {
+              "type": "integer"
+            },
+            "combinedKm": {
+              "type": "integer"
+            }
+          }
+        },
+        "emissionStandard": {
+          "type": "string",
+          "examples": [
+            "Euro 6d",
+            "Euro 6d-TEMP",
+            "Euro 7"
+          ]
+        },
+        "dimensions": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "lengthMm": {
+              "type": "integer"
+            },
+            "widthMm": {
+              "type": "integer"
+            },
+            "heightMm": {
+              "type": "integer"
+            },
+            "wheelbaseMm": {
+              "type": "integer"
+            },
+            "bootLitres": {
+              "type": "integer"
+            },
+            "groundClearanceMm": {
+              "type": "integer"
+            },
+            "turningCircleM": {
+              "type": "number"
+            },
+            "bootMaxLitres": {
+              "type": "integer",
+              "description": "Rear seats folded."
+            },
+            "frunkLitres": {
+              "type": "integer"
+            },
+            "fuelTankLitres": {
+              "type": "integer"
+            }
+          }
+        },
+        "weights": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "kerbKg": {
+              "type": "integer"
+            },
+            "grossKg": {
+              "type": "integer"
+            },
+            "towingBrakedKg": {
+              "type": "integer"
+            },
+            "payloadKg": {
+              "type": "integer"
+            },
+            "towingUnbrakedKg": {
+              "type": "integer"
+            },
+            "roofLoadKg": {
+              "type": "integer"
+            }
+          }
+        },
+        "wheels": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "rimSizeInch": {
+              "type": "number"
+            },
+            "tyresFront": {
+              "type": "string",
+              "examples": [
+                "225/45 R18"
+              ]
+            },
+            "tyresRear": {
+              "type": "string",
+              "examples": [
+                "255/40 R18"
+              ]
+            },
+            "spare": {
+              "enum": [
+                "full_size",
+                "space_saver",
+                "repair_kit",
+                "run_flat",
+                "none"
+              ]
+            }
+          }
+        },
+        "charging": {
+          "description": "How an electrified car is charged.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "ports": {
+              "type": "array",
+              "items": {
+                "enum": [
+                  "type1",
+                  "type2",
+                  "ccs1",
+                  "ccs2",
+                  "chademo",
+                  "nacs",
+                  "gbt",
+                  "schuko"
+                ]
+              }
+            },
+            "maxAcKw": {
+              "type": "number"
+            },
+            "maxDcKw": {
+              "type": "number"
+            },
+            "dc10To80Min": {
+              "type": "number"
+            },
+            "bidirectional": {
+              "enum": [
+                "none",
+                "v2l",
+                "v2h",
+                "v2g"
+              ]
+            }
+          }
+        },
+        "safety": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "euroNcapStars": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "euroNcapYear": {
+              "type": "integer"
+            },
+            "airbags": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        "environmentalLabels": {
+          "description": "National emission labels the car type qualifies for.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": [
+              "scheme",
+              "value"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "scheme": {
+                "type": "string",
+                "examples": [
+                  "de-umweltplakette",
+                  "fr-critair",
+                  "es-dgt",
+                  "eu-co2-class"
+                ]
+              },
+              "value": {
+                "type": "string",
+                "examples": [
+                  "4 (green)",
+                  "1",
+                  "ECO",
+                  "B"
+                ]
+              }
+            }
+          }
+        },
+        "segment": {
+          "description": "Market segment(s), e.g. Compact, SUV.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CatalogueRef",
+            "unevaluatedProperties": false
+          }
+        }
+      }
+    },
+    "Powertrain": {
+      "description": "How the car is propelled. Fuel is split into two independent questions: what does it burn (`energy`) and how electrified is it (`electrification`). Combined tokens like 'petrol hybrid' are never needed.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "energy": {
+          "description": "Energy carriers the car can use, primary first. A bi-fuel LPG car is [\"petrol\", \"lpg\"]; a BEV is [\"electricity\"].",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "enum": [
+              "petrol",
+              "diesel",
+              "electricity",
+              "hydrogen",
+              "cng",
+              "lpg",
+              "ethanol",
+              "other"
+            ]
+          }
+        },
+        "electrification": {
+          "description": "none = pure combustion, mhev = 48V mild, fhev = full self-charging hybrid, phev = plug-in, erev = range extender, bev = battery electric, fcev = fuel cell.",
+          "enum": [
+            "none",
+            "mhev",
+            "fhev",
+            "phev",
+            "erev",
+            "bev",
+            "fcev"
+          ]
+        },
+        "engine": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "code": {
+              "type": "string",
+              "examples": [
+                "B48B20"
+              ]
+            },
+            "displacementCc": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "cylinders": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "aspiration": {
+              "enum": [
+                "natural",
+                "turbo",
+                "supercharged",
+                "twin_turbo"
+              ]
+            }
+          }
+        },
+        "electricMotors": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "count": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "powerKw": {
+              "type": "number",
+              "description": "Combined motor power."
+            }
+          }
+        },
+        "powerKw": {
+          "description": "Total system power.",
+          "type": "number",
+          "minimum": 0
+        },
+        "powerHp": {
+          "description": "Metric horsepower (PS/hk), derived from kW; provided for display.",
+          "type": "number",
+          "minimum": 0
+        },
+        "torqueNm": {
+          "type": "number",
+          "minimum": 0
+        },
+        "transmission": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "enum": [
+                "manual",
+                "automatic",
+                "dct",
+                "cvt",
+                "single_speed"
+              ]
+            },
+            "gears": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "tradeName": {
+              "type": "string",
+              "examples": [
+                "Steptronic",
+                "S tronic",
+                "DSG"
+              ]
+            }
+          }
+        },
+        "traction": {
+          "description": "Driven wheels. `2wd` = two-wheel drive where the driven axle is not known, e.g. from a register that records only the number of driven axles; use `fwd` or `rwd` when it is known.",
+          "enum": [
+            "fwd",
+            "rwd",
+            "2wd",
+            "awd"
+          ]
+        },
+        "awdType": {
+          "description": "Only for awd.",
+          "enum": [
+            "permanent",
+            "on_demand",
+            "electric_axle"
+          ]
+        }
+      }
+    },
+    "Battery": {
+      "description": "Traction battery (BEV/PHEV/FHEV). Fields chosen to line up with the EU Battery Passport.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "grossKwh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "netKwh": {
+          "type": "number",
+          "minimum": 0
+        },
+        "chemistry": {
+          "type": "string",
+          "examples": [
+            "NMC",
+            "LFP",
+            "NCA"
+          ]
+        },
+        "voltageV": {
+          "type": "integer",
+          "examples": [
+            400,
+            800
+          ]
+        },
+        "heatPump": {
+          "enum": [
+            "standard",
+            "optional",
+            "unavailable"
+          ]
+        },
+        "passportId": {
+          "description": "Vehicle documents only: EU Battery Passport identifier/URI (Reg. 2023/1542).",
+          "type": "string"
+        }
+      }
+    },
+    "Efficiency": {
+      "type": "object",
+      "required": [
+        "cycle"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "cycle": {
+          "enum": [
+            "WLTP",
+            "NEDC",
+            "NEDC_WLTP_EQUIVALENT",
+            "EPA",
+            "CLTC",
+            "WLTC"
+          ]
+        },
+        "fuelL100km": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "combined": {
+              "type": "number"
+            },
+            "urban": {
+              "type": "number"
+            },
+            "extraUrban": {
+              "type": "number"
+            }
+          }
+        },
+        "electricKwh100km": {
+          "type": "number"
+        },
+        "electricRangeKm": {
+          "type": "integer"
+        },
+        "co2GKm": {
+          "type": "integer"
+        }
+      }
+    },
+    "Equipment": {
+      "description": "What the car is equipped with. A trim, package or option is identified by its NAME; that is what buyers, adverts and valuation use, and a name alone is enough to price it. Its contents are described separately as `features`. Absence is only known when stated (`fitted: false` / `availability: absent`); a missing entry means unknown.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "trim": {
+          "description": "The ONE base trim the car was bought in, e.g. 'Carrera 4S', 'Luxury Line', 'M Sport'. Never contains a body word: 'Carrera 4S Cabriolet' is trim 'Carrera 4S' on body 'Cabriolet'.",
+          "$ref": "#/$defs/EquipmentRef"
+        },
+        "packages": {
+          "description": "Named add-on packages, e.g. 'Sport Chrono', 'AMG Line', 'Winter Package'.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EquipmentRef"
+          }
+        },
+        "options": {
+          "description": "Individually ordered options, e.g. 'Harman Kardon Sound System'.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/EquipmentRef"
+          }
+        },
+        "features": {
+          "description": "Flat, brand-agnostic list of what the car has, so consumers can ask 'does it have adaptive cruise?' without knowing BMW calls it 'Active Cruise Control'.",
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Feature"
+          }
+        }
+      }
+    },
+    "EquipmentRef": {
+      "description": "A trim, package or option by name, optionally pointing to its catalogue record.",
+      "allOf": [
+        {
+          "$ref": "#/$defs/CatalogueRef"
+        }
+      ],
+      "properties": {
+        "variations": {
+          "description": "Type documents only: other ways the name is written, used for matching ('C4S' = 'Carrera 4S').",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "drivetrains": {
+          "description": "Type documents only, trims: drivetrain ids this trim is sold with.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fitted": {
+          "description": "Vehicle documents only: true = this car has it, false = known absent. Omit when unknown.",
+          "type": "boolean"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "Feature": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CatalogueRef"
+        }
+      ],
+      "required": [
+        "key"
+      ],
+      "properties": {
+        "key": {
+          "description": "Stable machine key of the canonical feature.",
+          "type": "string",
+          "pattern": "^[A-Z0-9_]+$",
+          "examples": [
+            "SAFETY_AEB",
+            "DRIVE_CRUISE_CONTROL",
+            "LIGHTING_HEADLIGHTS_LED"
+          ]
+        },
+        "category": {
+          "description": "Top-level group.",
+          "type": "string",
+          "examples": [
+            "SAFETY",
+            "DRIVE",
+            "INFOTAINMENT",
+            "LIGHTING",
+            "SEATS"
+          ]
+        },
+        "brandName": {
+          "description": "What the brand calls it.",
+          "type": "string"
+        },
+        "availability": {
+          "description": "Type documents: standard or optional on this trim. Vehicle documents: fitted, absent or unknown on this car.",
+          "enum": [
+            "standard",
+            "optional",
+            "fitted",
+            "absent",
+            "unknown"
+          ]
+        },
+        "viaPackage": {
+          "description": "Name or id of the package that brings this feature.",
+          "type": "string"
+        }
+      },
+      "unevaluatedProperties": false
+    },
+    "Vehicle": {
+      "description": "One physical car. Everything here can differ between two cars of the same drivetrain.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "vin": {
+          "type": "string",
+          "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
+          "description": "ISO 3779 VIN. Identifies one car and can be personal data when combined with an owner, so store and share it only where that is needed and allowed."
+        },
+        "registration": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "plate": {
+              "type": "string",
+              "description": "Registration plate as issued. It can be personal data; the same care as `vin` applies, and plates are re-issued, so a plate identifies a car only at a point in time."
+            },
+            "country": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "firstRegistrationDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "modelYear": {
+              "type": "integer"
+            },
+            "isImported": {
+              "type": "boolean",
+              "description": "First registered in another country than `country`."
+            },
+            "originalCountry": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            },
+            "usage": {
+              "description": "Registered use, when not private.",
+              "enum": [
+                "private",
+                "commercial",
+                "taxi",
+                "rental",
+                "demo",
+                "leasing",
+                "camper"
+              ]
+            },
+            "productionDate": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "odometer": {
+          "type": "object",
+          "required": [
+            "km"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "km": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "readAt": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "colour": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "name": {
+              "description": "Manufacturer paint name.",
+              "type": "string",
+              "examples": [
+                "Portimao Blue"
+              ]
+            },
+            "family": {
+              "enum": [
+                "black",
+                "white",
+                "grey",
+                "silver",
+                "blue",
+                "red",
+                "green",
+                "brown",
+                "beige",
+                "yellow",
+                "orange",
+                "purple",
+                "gold",
+                "other"
+              ]
+            },
+            "finish": {
+              "enum": [
+                "solid",
+                "metallic",
+                "pearl",
+                "matte"
+              ]
+            }
+          }
+        },
+        "interior": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "upholstery": {
+              "enum": [
+                "cloth",
+                "part_leather",
+                "leather",
+                "synthetic_leather",
+                "alcantara",
+                "other"
+              ]
+            },
+            "colour": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string",
+              "description": "Manufacturer name.",
+              "examples": [
+                "Vernasca Black"
+              ]
+            }
+          }
+        },
+        "condition": {
+          "description": "Physical state as observed, stated as facts rather than grades.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "damages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "area"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "area": {
+                    "type": "string",
+                    "examples": [
+                      "front_bumper",
+                      "left_rear_door",
+                      "windscreen",
+                      "underbody"
+                    ]
+                  },
+                  "kind": {
+                    "enum": [
+                      "scratch",
+                      "dent",
+                      "crack",
+                      "paint",
+                      "rust",
+                      "mechanical",
+                      "electrical",
+                      "hail",
+                      "flood",
+                      "fire"
+                    ]
+                  },
+                  "repaired": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            },
+            "nonSmoker": {
+              "type": "boolean"
+            },
+            "keys": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "modifications": {
+              "description": "Deviations from factory spec (tuning, conversions).",
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "history": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "previousOwners": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "fullServiceHistory": {
+              "type": "boolean"
+            },
+            "lastServiceDate": {
+              "type": "string",
+              "format": "date"
+            },
+            "lastInspectionDate": {
+              "type": "string",
+              "format": "date",
+              "description": "Periodic technical inspection (syn, TÜV, MOT, APK)."
+            },
+            "nextInspectionDue": {
+              "type": "string",
+              "format": "date"
+            },
+            "accidents": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "batteryStateOfHealthPct": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "events": {
+              "description": "Dated history entries (service, inspection, owner change, damage repair, odometer reading).",
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": [
+                  "date",
+                  "type"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "date": {
+                    "type": "string",
+                    "format": "date"
+                  },
+                  "type": {
+                    "enum": [
+                      "service",
+                      "inspection",
+                      "owner_change",
+                      "damage",
+                      "repair",
+                      "odometer_reading",
+                      "recall",
+                      "import"
+                    ]
+                  },
+                  "odometerKm": {
+                    "type": "integer"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "warranty": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "factoryUntil": {
+              "type": "string",
+              "format": "date"
+            },
+            "batteryUntil": {
+              "type": "string",
+              "format": "date"
+            },
+            "dealerMonths": {
+              "type": "integer"
+            }
+          }
+        },
+        "originalListPrice": {
+          "description": "Price when new in the first-registration market, including the options fitted.",
+          "$ref": "#/$defs/Money"
+        }
+      }
+    },
+    "Money": {
+      "type": "object",
+      "required": [
+        "amount",
+        "currency"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "amount": {
+          "type": "number"
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$",
+          "description": "ISO 4217."
+        }
+      }
+    },
+    "BodyType": {
+      "description": "Coarse body style. The manufacturer's own name goes in body.oemName.",
+      "enum": [
+        "hatchback",
+        "sedan",
+        "liftback",
+        "estate",
+        "mpv",
+        "suv",
+        "coupe",
+        "cabriolet",
+        "roadster",
+        "pickup",
+        "van"
+      ]
+    },
+    "TypeDocumentRules": {
+      "description": "What a `type` document may not contain: anything about one physical car.",
+      "properties": {
+        "vehicle": false,
+        "equipment": {
+          "properties": {
+            "trim": {
+              "$ref": "#/$defs/TypeEquipmentRef"
+            },
+            "packages": {
+              "items": {
+                "$ref": "#/$defs/TypeEquipmentRef"
+              }
+            },
+            "options": {
+              "items": {
+                "$ref": "#/$defs/TypeEquipmentRef"
+              }
+            },
+            "features": {
+              "items": {
+                "properties": {
+                  "availability": {
+                    "enum": [
+                      "standard",
+                      "optional"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "specification": {
+          "properties": {
+            "battery": {
+              "properties": {
+                "passportId": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "VehicleDocumentRules": {
+      "description": "What a `vehicle` document must and may not contain: it describes one physical car, so it has a `vehicle` block and no catalogue matching data.",
+      "required": [
+        "vehicle"
+      ],
+      "properties": {
+        "equipment": {
+          "properties": {
+            "trim": {
+              "$ref": "#/$defs/VehicleEquipmentRef"
+            },
+            "packages": {
+              "items": {
+                "$ref": "#/$defs/VehicleEquipmentRef"
+              }
+            },
+            "options": {
+              "items": {
+                "$ref": "#/$defs/VehicleEquipmentRef"
+              }
+            },
+            "features": {
+              "items": {
+                "properties": {
+                  "availability": {
+                    "enum": [
+                      "fitted",
+                      "absent",
+                      "unknown"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "TypeEquipmentRef": {
+      "properties": {
+        "fitted": false
+      }
+    },
+    "VehicleEquipmentRef": {
+      "properties": {
+        "variations": false,
+        "drivetrains": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "avs"
+        ],
+        "properties": {
+          "avs": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "type"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/TypeDocumentRules"
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "avs"
+        ],
+        "properties": {
+          "avs": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "vehicle"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/VehicleDocumentRules"
+      }
+    }
+  ]
+}

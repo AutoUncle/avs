@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Version>0.2.0</Version>
+    <PackageId>AutoUncle.Avs</PackageId>
+    <Authors>AutoUncle</Authors>
+    <Description>AVS – AutoUncle Vehicle Schema: the JSON Schema and a validator.</Description>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/AutoUncle/avs</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/AutoUncle/avs</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="avs.schema.json" LogicalName="AutoUncle.Avs.avs.schema.json" />
+    <None Include="../../README.md" Pack="true" PackagePath="/" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="JsonSchema.Net" Version="7.3.1" />
+  </ItemGroup>
+
+</Project>

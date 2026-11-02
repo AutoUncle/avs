@@ -1,0 +1,27 @@
+{
+  "name": "autouncle/avs",
+  "description": "AVS – AutoUncle Vehicle Schema: the JSON Schema and a validator",
+  "type": "library",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/AutoUncle/avs",
+  "require": {
+    "php": ">=8.1",
+    "ext-json": "*",
+    "opis/json-schema": "^2.4"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^10.5"
+  },
+  "autoload": {
+    "psr-4": { "AutoUncle\\Avs\\": "packages/php/src/" }
+  },
+  "autoload-dev": {
+    "psr-4": { "AutoUncle\\Avs\\Tests\\": "packages/php/tests/" }
+  },
+  "scripts": {
+    "test": "phpunit --configuration packages/php/phpunit.xml"
+  },
+  "config": {
+    "sort-packages": true
+  }
+}
