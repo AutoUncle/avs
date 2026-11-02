@@ -5,6 +5,9 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   validate:
     runs-on: ubuntu-latest
@@ -18,3 +21,5 @@ jobs:
         run: check-jsonschema --check-metaschema schema/avs.schema.json
       - name: Examples validate against the schema
         run: check-jsonschema --schemafile schema/avs.schema.json examples/*.json
+      - name: Invalid documents are rejected
+        run: scripts/check-invalid.sh

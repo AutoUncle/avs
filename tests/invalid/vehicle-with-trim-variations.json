@@ -1,0 +1,23 @@
+{
+  "avs": {
+    "version": "0.2",
+    "kind": "vehicle"
+  },
+  "identity": {
+    "brand": {
+      "name": "BMW"
+    },
+    "model": {
+      "name": "3 Series"
+    }
+  },
+  "vehicle": {},
+  "equipment": {
+    "trim": {
+      "name": "M Sport",
+      "variations": [
+        "M-Sport"
+      ]
+    }
+  }
+}

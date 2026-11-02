@@ -2,12 +2,13 @@
 
 An open, versioned JSON Schema for describing a car: what it is, how it is built and what it is equipped with. For one physical car, it also covers what has happened to it.
 
-> **Status: draft 0.1.** The structure may still change. Feedback is welcome in issues.
+> **Status: draft 0.2.** The structure may still change. Feedback is welcome in issues.
 
 | Path | What |
 |---|---|
 | [`schema/avs.schema.json`](schema/avs.schema.json) | The schema (JSON Schema draft 2020-12). Every field has a description. |
 | [`examples/`](examples) | A car type (BMW 320e G20 Sedan, M Sport) and one physical car of that type. Catalogue ids are placeholders. |
+| [`tests/invalid/`](tests/invalid) | Small documents the schema must reject, one rule each. |
 | [`docs/existing-standards.md`](docs/existing-standards.md) | How AVS relates to schema.org, EU type approval, the Battery Passport, COVESA VSS and others. |
 | [`CHANGELOG.md`](CHANGELOG.md) | Version history. |
 
@@ -48,6 +49,7 @@ Brand ─ (Series) ─ Model ─ Generation ─ Phase (launch / facelift)
 - **Anything that depends on both body and drivetrain lives on the configuration.** That covers seats, official consumption, CO₂ and electric range.
 - **Facelifts are a phase, not a new generation.**
 - **A trim is identified by name.** A car has exactly one base trim, and the trim name never contains a body word: "Carrera 4S Cabriolet" is trim *Carrera 4S* on body *Cabriolet*. What a trim contains is described by `features`.
+- **A document is one kind.** A `type` document has no `vehicle` block, no `fitted` flags and only `standard`/`optional` features. A `vehicle` document has a `vehicle` block, no matching data (`variations`, `drivetrains`) and only `fitted`/`absent`/`unknown` features. The schema enforces this.
 - **Absence must be stated.** `fitted: false` or `availability: absent` means the car does not have it. A missing entry means unknown.
 - **Condition is recorded as facts, not grades.** A damage is described by its area, its kind and whether it was repaired.
 
@@ -56,6 +58,8 @@ Brand ─ (Series) ─ Model ─ Generation ─ Phase (launch / facelift)
 - **Units are part of the field name** (`powerKw`, `torqueNm`, `co2GKm`, `grossKwh`). Values follow EU Certificate of Conformity and WLTP conventions.
 - **Fuel is described by two fields:** `energy` (what the car burns) and `electrification` (none, mhev, fhev, phev, erev, bev, fcev).
 - **Catalogue ids are stable and never reused.** A merged record redirects to the record it was merged into.
+- **Unknown keys are rejected** everywhere, including on catalogue references. Vendor data goes in `extensions`.
+- **VINs and plates can be personal data.** Store and share them only where that is needed and allowed.
 - **Enums are in English, snake_case.** Countries use ISO 3166-1 alpha-2, currencies ISO 4217, VINs ISO 3779.
 
 ## Validating
@@ -63,9 +67,10 @@ Brand ─ (Series) ─ Model ─ Generation ─ Phase (launch / facelift)
 ```bash
 pipx run check-jsonschema --check-metaschema schema/avs.schema.json
 pipx run check-jsonschema --schemafile schema/avs.schema.json examples/*.json
+scripts/check-invalid.sh   # every tests/invalid/*.json must be rejected
 ```
 
-CI runs both on every push and pull request.
+CI runs all three on every push and pull request.
 
 ## Versioning
 

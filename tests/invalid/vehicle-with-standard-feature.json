@@ -1,0 +1,24 @@
+{
+  "avs": {
+    "version": "0.2",
+    "kind": "vehicle"
+  },
+  "identity": {
+    "brand": {
+      "name": "BMW"
+    },
+    "model": {
+      "name": "3 Series"
+    }
+  },
+  "vehicle": {},
+  "equipment": {
+    "features": [
+      {
+        "key": "SAFETY_AEB",
+        "name": "AEB",
+        "availability": "standard"
+      }
+    ]
+  }
+}
