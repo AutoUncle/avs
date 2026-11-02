@@ -1,0 +1,192 @@
+{
+  "avs": {
+    "version": "0.1",
+    "kind": "type"
+  },
+  "identity": {
+    "brand": {
+      "id": "b-example0001",
+      "name": "BMW"
+    },
+    "model": {
+      "id": "cm-example0001",
+      "name": "3 Series",
+      "localNames": {
+        "DK": "3-serie"
+      }
+    },
+    "generation": {
+      "name": "3 Series (G20/G21)",
+      "code": "G20",
+      "fromYear": 2018,
+      "toYear": 2025
+    },
+    "phase": {
+      "name": "Launch",
+      "kind": "launch",
+      "index": 0,
+      "fromYear": 2018,
+      "toYear": 2022
+    },
+    "body": {
+      "id": "mg-example0001",
+      "name": "3 Series Sedan (G20)",
+      "type": "sedan",
+      "doors": 4,
+      "fromYear": 2018,
+      "toYear": 2022
+    },
+    "drivetrain": {
+      "id": "dv-example0001",
+      "name": "320e (204 Hp) Plug-in Hybrid Steptronic"
+    },
+    "configuration": {
+      "name": "320e Sedan 5 seats",
+      "seats": 5
+    },
+    "typeApproval": {
+      "category": "M1"
+    }
+  },
+  "specification": {
+    "body": {
+      "type": "sedan",
+      "doors": 4,
+      "seats": 5,
+      "driveSide": "left"
+    },
+    "powertrain": {
+      "energy": [
+        "petrol",
+        "electricity"
+      ],
+      "electrification": "phev",
+      "engine": {
+        "code": "B48B20A",
+        "displacementCc": 1998,
+        "cylinders": 4,
+        "aspiration": "turbo"
+      },
+      "powerKw": 150,
+      "powerHp": 204,
+      "torqueNm": 300,
+      "transmission": {
+        "type": "automatic",
+        "gears": 8,
+        "tradeName": "Steptronic"
+      },
+      "traction": "rwd",
+      "electricMotors": {
+        "count": 1,
+        "powerKw": 83
+      }
+    },
+    "battery": {
+      "grossKwh": 12.0
+    },
+    "efficiency": [
+      {
+        "cycle": "WLTP",
+        "fuelL100km": {
+          "combined": 1.3
+        },
+        "electricKwh100km": 16.1,
+        "electricRangeKm": 61,
+        "co2GKm": 29
+      }
+    ],
+    "emissionStandard": "Euro 6d",
+    "charging": {
+      "ports": [
+        "type2"
+      ],
+      "maxAcKw": 3.7
+    },
+    "wheels": {
+      "rimSizeInch": 18,
+      "tyresFront": "225/45 R18",
+      "tyresRear": "255/40 R18",
+      "spare": "run_flat"
+    },
+    "dimensions": {
+      "lengthMm": 4709,
+      "widthMm": 1827,
+      "heightMm": 1440,
+      "wheelbaseMm": 2851,
+      "bootLitres": 375,
+      "fuelTankLitres": 40
+    },
+    "safety": {
+      "euroNcapStars": 5,
+      "euroNcapYear": 2019
+    },
+    "environmentalLabels": [
+      {
+        "scheme": "de-umweltplakette",
+        "value": "4 (green)"
+      }
+    ]
+  },
+  "equipment": {
+    "trim": {
+      "id": "ep-example0001",
+      "name": "M Sport",
+      "variations": [
+        "M Sportpakke",
+        "M-Sport"
+      ]
+    },
+    "options": [
+      {
+        "id": "ep-example0002",
+        "name": "Driving Assistant Professional"
+      },
+      {
+        "id": "ep-example0003",
+        "name": "Harman Kardon Surround Sound System"
+      }
+    ],
+    "features": [
+      {
+        "id": "f-example0001",
+        "key": "SAFETY_AEB",
+        "name": "Autonomous Emergency Braking (AEB)",
+        "category": "SAFETY",
+        "availability": "standard",
+        "viaPackage": "M Sport"
+      },
+      {
+        "id": "f-example0002",
+        "key": "LIGHTING_HEADLIGHTS_LED",
+        "name": "LED Headlights",
+        "category": "LIGHTING",
+        "availability": "standard",
+        "viaPackage": "M Sport"
+      },
+      {
+        "id": "f-example0003",
+        "key": "SEATS_FRONT_SPORT",
+        "name": "Front Sport Seats",
+        "category": "SEATS",
+        "availability": "standard",
+        "viaPackage": "M Sport"
+      },
+      {
+        "id": "f-example0004",
+        "key": "CONNECTIVITY_APPLE_CARPLAY",
+        "name": "Apple CarPlay",
+        "category": "CONNECTIVITY",
+        "availability": "standard",
+        "viaPackage": "M Sport"
+      },
+      {
+        "key": "DRIVE_ADAPTIVE_CRUISE_CONTROL",
+        "name": "Adaptive Cruise Control",
+        "brandName": "Active Cruise Control with Stop&Go",
+        "category": "DRIVE",
+        "availability": "optional",
+        "viaPackage": "Driving Assistant Professional"
+      }
+    ]
+  }
+}

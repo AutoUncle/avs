@@ -1,0 +1,254 @@
+{
+  "avs": {
+    "version": "0.1",
+    "kind": "vehicle"
+  },
+  "identity": {
+    "brand": {
+      "id": "b-example0001",
+      "name": "BMW"
+    },
+    "model": {
+      "id": "cm-example0001",
+      "name": "3 Series",
+      "localNames": {
+        "DK": "3-serie"
+      }
+    },
+    "generation": {
+      "name": "3 Series (G20/G21)",
+      "code": "G20",
+      "fromYear": 2018,
+      "toYear": 2025
+    },
+    "phase": {
+      "name": "Launch",
+      "kind": "launch",
+      "index": 0,
+      "fromYear": 2018,
+      "toYear": 2022
+    },
+    "body": {
+      "id": "mg-example0001",
+      "name": "3 Series Sedan (G20)",
+      "type": "sedan",
+      "doors": 4,
+      "fromYear": 2018,
+      "toYear": 2022
+    },
+    "drivetrain": {
+      "id": "dv-example0001",
+      "name": "320e (204 Hp) Plug-in Hybrid Steptronic"
+    },
+    "configuration": {
+      "name": "320e Sedan 5 seats",
+      "seats": 5
+    },
+    "typeApproval": {
+      "category": "M1"
+    }
+  },
+  "specification": {
+    "body": {
+      "type": "sedan",
+      "doors": 4,
+      "seats": 5,
+      "driveSide": "left"
+    },
+    "powertrain": {
+      "energy": [
+        "petrol",
+        "electricity"
+      ],
+      "electrification": "phev",
+      "engine": {
+        "code": "B48B20A",
+        "displacementCc": 1998,
+        "cylinders": 4,
+        "aspiration": "turbo"
+      },
+      "powerKw": 150,
+      "powerHp": 204,
+      "torqueNm": 300,
+      "transmission": {
+        "type": "automatic",
+        "gears": 8,
+        "tradeName": "Steptronic"
+      },
+      "traction": "rwd",
+      "electricMotors": {
+        "count": 1,
+        "powerKw": 83
+      }
+    },
+    "battery": {
+      "grossKwh": 12.0
+    },
+    "efficiency": [
+      {
+        "cycle": "WLTP",
+        "fuelL100km": {
+          "combined": 1.3
+        },
+        "electricKwh100km": 16.1,
+        "electricRangeKm": 61,
+        "co2GKm": 29
+      }
+    ],
+    "emissionStandard": "Euro 6d",
+    "charging": {
+      "ports": [
+        "type2"
+      ],
+      "maxAcKw": 3.7
+    },
+    "wheels": {
+      "rimSizeInch": 18,
+      "tyresFront": "225/45 R18",
+      "tyresRear": "255/40 R18",
+      "spare": "run_flat"
+    },
+    "dimensions": {
+      "lengthMm": 4709,
+      "widthMm": 1827,
+      "heightMm": 1440,
+      "wheelbaseMm": 2851,
+      "bootLitres": 375,
+      "fuelTankLitres": 40
+    },
+    "safety": {
+      "euroNcapStars": 5,
+      "euroNcapYear": 2019
+    },
+    "environmentalLabels": [
+      {
+        "scheme": "de-umweltplakette",
+        "value": "4 (green)"
+      }
+    ]
+  },
+  "equipment": {
+    "trim": {
+      "id": "ep-example0001",
+      "name": "M Sport",
+      "fitted": true
+    },
+    "options": [
+      {
+        "id": "ep-example0002",
+        "name": "Driving Assistant Professional",
+        "fitted": true
+      },
+      {
+        "id": "ep-example0003",
+        "name": "Harman Kardon Surround Sound System",
+        "fitted": false
+      }
+    ],
+    "features": [
+      {
+        "id": "f-example0001",
+        "key": "SAFETY_AEB",
+        "name": "Autonomous Emergency Braking (AEB)",
+        "category": "SAFETY",
+        "availability": "fitted",
+        "viaPackage": "M Sport"
+      },
+      {
+        "id": "f-example0002",
+        "key": "LIGHTING_HEADLIGHTS_LED",
+        "name": "LED Headlights",
+        "category": "LIGHTING",
+        "availability": "fitted",
+        "viaPackage": "M Sport"
+      },
+      {
+        "id": "f-example0003",
+        "key": "SEATS_FRONT_SPORT",
+        "name": "Front Sport Seats",
+        "category": "SEATS",
+        "availability": "fitted",
+        "viaPackage": "M Sport"
+      },
+      {
+        "id": "f-example0004",
+        "key": "CONNECTIVITY_APPLE_CARPLAY",
+        "name": "Apple CarPlay",
+        "category": "CONNECTIVITY",
+        "availability": "fitted",
+        "viaPackage": "M Sport"
+      },
+      {
+        "key": "DRIVE_ADAPTIVE_CRUISE_CONTROL",
+        "name": "Adaptive Cruise Control",
+        "brandName": "Active Cruise Control with Stop&Go",
+        "category": "DRIVE",
+        "availability": "fitted",
+        "viaPackage": "Driving Assistant Professional"
+      }
+    ]
+  },
+  "vehicle": {
+    "vin": "WBA5R1C00LFH00000",
+    "registration": {
+      "country": "DK",
+      "firstRegistrationDate": "2021-03-15",
+      "modelYear": 2021,
+      "isImported": true,
+      "originalCountry": "DE",
+      "usage": "private"
+    },
+    "odometer": {
+      "km": 68400,
+      "readAt": "2026-10-28"
+    },
+    "colour": {
+      "name": "Portimao Blue",
+      "family": "blue",
+      "finish": "metallic"
+    },
+    "interior": {
+      "upholstery": "leather",
+      "colour": "black",
+      "name": "Vernasca Black"
+    },
+    "condition": {
+      "damages": [
+        {
+          "area": "front_bumper",
+          "kind": "scratch",
+          "repaired": true
+        }
+      ],
+      "nonSmoker": true,
+      "keys": 2
+    },
+    "history": {
+      "previousOwners": 2,
+      "fullServiceHistory": true,
+      "lastInspectionDate": "2025-03-10",
+      "nextInspectionDue": "2027-03-10",
+      "batteryStateOfHealthPct": 91,
+      "events": [
+        {
+          "date": "2021-03-15",
+          "type": "import",
+          "odometerKm": 9800,
+          "note": "Imported from DE"
+        },
+        {
+          "date": "2025-03-10",
+          "type": "inspection",
+          "odometerKm": 52100
+        }
+      ]
+    },
+    "warranty": {
+      "batteryUntil": "2027-03-15"
+    },
+    "originalListPrice": {
+      "amount": 449900,
+      "currency": "DKK"
+    }
+  }
+}

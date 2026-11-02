@@ -1,0 +1,20 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install check-jsonschema==0.29.4
+      - name: Schema is valid JSON Schema
+        run: check-jsonschema --check-metaschema schema/avs.schema.json
+      - name: Examples validate against the schema
+        run: check-jsonschema --schemafile schema/avs.schema.json examples/*.json
