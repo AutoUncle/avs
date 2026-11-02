@@ -47,9 +47,9 @@
     "ajv-formats": "^3.0.1"
   },
   "devDependencies": {
-    "@types/node": "^22.10.0",
-    "json-schema-to-typescript": "^15.0.4",
-    "tsup": "^8.3.5",
-    "typescript": "^5.7.2"
+    "@types/node": "^26.6.6",
+    "json-schema-to-typescript": "^16.0.0",
+    "tsup": "^9.0.0",
+    "typescript": "^7.0.2"
   }
 }
