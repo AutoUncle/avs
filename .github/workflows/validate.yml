@@ -18,3 +18,13 @@ jobs:
         run: check-jsonschema --check-metaschema schema/avs.schema.json
       - name: Examples validate against the schema
         run: check-jsonschema --schemafile schema/avs.schema.json examples/*.json
+      - name: Invalid documents are rejected
+        run: |
+          fail=0
+          for f in tests/invalid/*.json; do
+            if check-jsonschema --schemafile schema/avs.schema.json "$f" > /dev/null; then
+              echo "::error file=$f::accepted, but the schema should reject it"
+              fail=1
+            fi
+          done
+          exit $fail

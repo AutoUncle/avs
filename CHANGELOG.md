@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.2.0 – draft
+
+Breaking: some documents that were valid under 0.1 are now rejected.
+
+- Unknown keys are rejected everywhere. Catalogue references and the levels that extend them (generation, phase, body, configuration, equipment, features) used to accept any key, so a typo such as `fromYr` validated.
+- The document kind is enforced. A `type` document may not have a `vehicle` block, `fitted` flags, `fitted`/`absent` features or a battery passport id. A `vehicle` document must have a `vehicle` block and may not have `variations`, `drivetrains` or `standard`/`optional` features.
+- `traction` gains `2wd`, for two-wheel drive where the driven axle is not known (registers often record only the number of driven axles).
+- `vin` and `registration.plate` note that they can be personal data.
+- `tests/invalid/` holds documents the schema must reject; CI checks each one.
+
 ## 0.1.0 – draft
 
 - First draft. It has four layers: identity, specification, equipment and vehicle.

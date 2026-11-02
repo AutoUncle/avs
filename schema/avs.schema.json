@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://schema.autouncle.com/avs/0.1/avs.schema.json",
+  "$id": "https://schema.autouncle.com/avs/0.2/avs.schema.json",
   "title": "AVS – AutoUncle Vehicle Schema",
-  "description": "Draft 0.1. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.",
+  "description": "Draft 0.2. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.",
   "type": "object",
   "required": [
     "avs",
@@ -44,10 +44,10 @@
       "additionalProperties": false,
       "properties": {
         "version": {
-          "const": "0.1"
+          "const": "0.2"
         },
         "kind": {
-          "description": "`type` = a car type as built (no physical car). `vehicle` = one physical car.",
+          "description": "`type` = a car type as built (no physical car). `vehicle` = one physical car, so the `vehicle` block is required. Fields that only make sense for one kind are rejected in the other.",
           "enum": [
             "type",
             "vehicle"
@@ -76,14 +76,17 @@
       "additionalProperties": false,
       "properties": {
         "brand": {
-          "$ref": "#/$defs/CatalogueRef"
+          "$ref": "#/$defs/CatalogueRef",
+          "unevaluatedProperties": false
         },
         "series": {
           "$ref": "#/$defs/CatalogueRef",
-          "description": "Optional brand grouping, e.g. BMW 'i'."
+          "description": "Optional brand grouping, e.g. BMW 'i'.",
+          "unevaluatedProperties": false
         },
         "model": {
-          "$ref": "#/$defs/CatalogueRef"
+          "$ref": "#/$defs/CatalogueRef",
+          "unevaluatedProperties": false
         },
         "generation": {
           "description": "A generation of the model, e.g. 'Golf VII' or 'G20/G21', with an envelope year range covering all its bodies. Holds no body or engine data.",
@@ -114,7 +117,8 @@
               "minimum": 1940,
               "description": "null = still in production."
             }
-          }
+          },
+          "unevaluatedProperties": false
         },
         "phase": {
           "description": "Production phase within the generation: the launch version or a facelift (BMW 'LCI', Mercedes 'Mopf'). Facelifts change looks, equipment and often engines, and they move prices, so they get their own level instead of being a new generation.",
@@ -146,7 +150,8 @@
               ],
               "minimum": 1940
             }
-          }
+          },
+          "unevaluatedProperties": false
         },
         "body": {
           "description": "One body style of the generation with its own production years, e.g. 'Golf VII Variant' or 'Transporter T6 Panel Van L2H1'. Everything that is about the shell lives here: type, doors, length, roof, cab.",
@@ -219,11 +224,13 @@
               ],
               "minimum": 1940
             }
-          }
+          },
+          "unevaluatedProperties": false
         },
         "drivetrain": {
           "description": "One technical spec (engine code, energy, displacement, power, torque, gearbox, gears, traction, battery, emission standard), shared by every body it was sold in. Two drivetrains differ only if the spec differs, so name tokens (OPF, ACT), trims and seats never create a new one.",
-          "$ref": "#/$defs/CatalogueRef"
+          "$ref": "#/$defs/CatalogueRef",
+          "unevaluatedProperties": false
         },
         "configuration": {
           "description": "The pairing of this body with this drivetrain as it was actually sold. It is the most precise car-type identity and owns what depends on both: seat count, official consumption, CO2 and electric range.",
@@ -238,7 +245,8 @@
               "minimum": 1,
               "maximum": 9
             }
-          }
+          },
+          "unevaluatedProperties": false
         },
         "typeApproval": {
           "description": "The official EU identity of the car type (Reg. 2018/858, printed on the Certificate of Conformity and carried in national registers). Type/Variant/Version (TVV) is legal-centric, not trim-centric, so it sits beside the catalogue hierarchy rather than replacing it.",
@@ -280,7 +288,7 @@
       }
     },
     "CatalogueRef": {
-      "description": "A pointer to one catalogue record plus a human-readable name.",
+      "description": "A pointer to one catalogue record plus a human-readable name. Left open so that levels can extend it; every place that uses it closes it with `unevaluatedProperties: false`, so unknown keys are rejected.",
       "type": "object",
       "required": [
         "name"
@@ -610,7 +618,8 @@
           "description": "Market segment(s), e.g. Compact, SUV.",
           "type": "array",
           "items": {
-            "$ref": "#/$defs/CatalogueRef"
+            "$ref": "#/$defs/CatalogueRef",
+            "unevaluatedProperties": false
           }
         }
       }
@@ -733,10 +742,11 @@
           }
         },
         "traction": {
-          "description": "Driven wheels.",
+          "description": "Driven wheels. `2wd` = two-wheel drive where the driven axle is not known, e.g. from a register that records only the number of driven axles; use `fwd` or `rwd` when it is known.",
           "enum": [
             "fwd",
             "rwd",
+            "2wd",
             "awd"
           ]
         },
@@ -875,24 +885,25 @@
       ],
       "properties": {
         "variations": {
-          "description": "Catalogue documents only: other ways the name is written, used for matching ('C4S' = 'Carrera 4S').",
+          "description": "Type documents only: other ways the name is written, used for matching ('C4S' = 'Carrera 4S').",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "drivetrains": {
-          "description": "Catalogue documents only, trims: drivetrain ids this trim is sold with.",
+          "description": "Type documents only, trims: drivetrain ids this trim is sold with.",
           "type": "array",
           "items": {
             "type": "string"
           }
         },
         "fitted": {
-          "description": "Vehicle/listing documents only: true = this car has it, false = known absent. Omit when unknown.",
+          "description": "Vehicle documents only: true = this car has it, false = known absent. Omit when unknown.",
           "type": "boolean"
         }
-      }
+      },
+      "unevaluatedProperties": false
     },
     "Feature": {
       "allOf": [
@@ -930,7 +941,7 @@
           "type": "string"
         },
         "availability": {
-          "description": "Catalogue documents: standard or optional on this trim. Vehicle documents: fitted, absent or unknown on this car.",
+          "description": "Type documents: standard or optional on this trim. Vehicle documents: fitted, absent or unknown on this car.",
           "enum": [
             "standard",
             "optional",
@@ -943,7 +954,8 @@
           "description": "Name or id of the package that brings this feature.",
           "type": "string"
         }
-      }
+      },
+      "unevaluatedProperties": false
     },
     "Vehicle": {
       "description": "One physical car. Everything here can differ between two cars of the same drivetrain.",
@@ -953,14 +965,15 @@
         "vin": {
           "type": "string",
           "pattern": "^[A-HJ-NPR-Z0-9]{17}$",
-          "description": "ISO 3779 VIN."
+          "description": "ISO 3779 VIN. Identifies one car and can be personal data when combined with an owner, so store and share it only where that is needed and allowed."
         },
         "registration": {
           "type": "object",
           "additionalProperties": false,
           "properties": {
             "plate": {
-              "type": "string"
+              "type": "string",
+              "description": "Registration plate as issued. It can be personal data; the same care as `vin` applies, and plates are re-issued, so a plate identifies a car only at a point in time."
             },
             "country": {
               "type": "string",
@@ -1267,6 +1280,145 @@
         "pickup",
         "van"
       ]
+    },
+    "TypeDocumentRules": {
+      "description": "What a `type` document may not contain: anything about one physical car.",
+      "properties": {
+        "vehicle": false,
+        "equipment": {
+          "properties": {
+            "trim": {
+              "$ref": "#/$defs/TypeEquipmentRef"
+            },
+            "packages": {
+              "items": {
+                "$ref": "#/$defs/TypeEquipmentRef"
+              }
+            },
+            "options": {
+              "items": {
+                "$ref": "#/$defs/TypeEquipmentRef"
+              }
+            },
+            "features": {
+              "items": {
+                "properties": {
+                  "availability": {
+                    "enum": [
+                      "standard",
+                      "optional"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "specification": {
+          "properties": {
+            "battery": {
+              "properties": {
+                "passportId": false
+              }
+            }
+          }
+        }
+      }
+    },
+    "VehicleDocumentRules": {
+      "description": "What a `vehicle` document must and may not contain: it describes one physical car, so it has a `vehicle` block and no catalogue matching data.",
+      "required": [
+        "vehicle"
+      ],
+      "properties": {
+        "equipment": {
+          "properties": {
+            "trim": {
+              "$ref": "#/$defs/VehicleEquipmentRef"
+            },
+            "packages": {
+              "items": {
+                "$ref": "#/$defs/VehicleEquipmentRef"
+              }
+            },
+            "options": {
+              "items": {
+                "$ref": "#/$defs/VehicleEquipmentRef"
+              }
+            },
+            "features": {
+              "items": {
+                "properties": {
+                  "availability": {
+                    "enum": [
+                      "fitted",
+                      "absent",
+                      "unknown"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "TypeEquipmentRef": {
+      "properties": {
+        "fitted": false
+      }
+    },
+    "VehicleEquipmentRef": {
+      "properties": {
+        "variations": false,
+        "drivetrains": false
+      }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "required": [
+          "avs"
+        ],
+        "properties": {
+          "avs": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "type"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/TypeDocumentRules"
+      }
+    },
+    {
+      "if": {
+        "required": [
+          "avs"
+        ],
+        "properties": {
+          "avs": {
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "vehicle"
+              }
+            }
+          }
+        }
+      },
+      "then": {
+        "$ref": "#/$defs/VehicleDocumentRules"
+      }
+    }
+  ]
 }
