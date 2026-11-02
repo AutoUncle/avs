@@ -71,7 +71,11 @@ def validate(document: Document) -> List[ValidationError]:
 
 
 def is_valid(document: Document) -> bool:
-    return not validate(document)
+    """True if the document is JSON and a valid AVS document; never raises."""
+    try:
+        return not validate(document)
+    except ValueError:  # json.JSONDecodeError and UnicodeDecodeError are ValueErrors
+        return False
 
 
 def validate_or_raise(document: Document) -> None:

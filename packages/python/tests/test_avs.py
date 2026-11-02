@@ -39,3 +39,9 @@ def test_validate_or_raise_lists_errors():
 
 def test_schema_version_matches_version_file():
     assert avs.SCHEMA_VERSION == VERSION
+
+
+def test_is_valid_is_false_for_malformed_json():
+    assert avs.is_valid("{") is False
+    with pytest.raises(ValueError):
+        avs.validate("{")

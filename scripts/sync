@@ -20,7 +20,8 @@ RUBY
 
 # npm
 cp "$schema" packages/npm/src/avs.schema.json
-(cd packages/npm && npm pkg set version="$version" >/dev/null && npm run --silent generate)
+# `npm version` also updates package-lock.json, which `npm pkg set` would leave behind.
+(cd packages/npm && npm version "$version" --no-git-tag-version --allow-same-version >/dev/null && npm run --silent generate)
 
 # Python
 cp "$schema" packages/python/src/avs/avs.schema.json

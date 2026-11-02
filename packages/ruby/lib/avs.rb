@@ -37,7 +37,12 @@ module AVS
       end
     end
 
-    def valid?(document) = validate(document).empty?
+    # True if the document is JSON and a valid AVS document; never raises.
+    def valid?(document)
+      validate(document).empty?
+    rescue JSON::ParserError
+      false
+    end
 
     def validate!(document)
       errors = validate(document)

@@ -89,20 +89,59 @@ export interface Identity {
   /**
    * A generation of the model, e.g. 'Golf VII' or 'G20/G21', with an envelope year range covering all its bodies. Holds no body or engine data.
    */
-  generation?: CatalogueRef;
+  generation?: CatalogueRef & {
+    /**
+     * Manufacturer chassis/generation code.
+     */
+    code?: string;
+    fromYear?: number;
+    /**
+     * null = still in production.
+     */
+    toYear?: number | null;
+  };
   /**
    * Production phase within the generation: the launch version or a facelift (BMW 'LCI', Mercedes 'Mopf'). Facelifts change looks, equipment and often engines, and they move prices, so they get their own level instead of being a new generation.
    */
-  phase?: CatalogueRef;
+  phase?: CatalogueRef & {
+    kind?: "launch" | "facelift";
+    /**
+     * 0 = launch, 1 = first facelift, …
+     */
+    index?: number;
+    fromYear?: number;
+    toYear?: number | null;
+  };
   /**
    * One body style of the generation with its own production years, e.g. 'Golf VII Variant' or 'Transporter T6 Panel Van L2H1'. Everything that is about the shell lives here: type, doors, length, roof, cab.
    */
-  body?: CatalogueRef;
+  body?: CatalogueRef & {
+    type?: BodyType;
+    doors?: number;
+    /**
+     * The manufacturer's own body name.
+     */
+    oemName?: string;
+    /**
+     * Van/MPV length with OEM token.
+     */
+    lengthClass?: string;
+    /**
+     * Van roof height with OEM token.
+     */
+    roofClass?: string;
+    cabType?: string;
+    vanBody?: "panel_van" | "kombi" | "crew_van" | "bus" | "chassis_cab";
+    fromYear?: number;
+    toYear?: number | null;
+  };
   drivetrain?: CatalogueRef;
   /**
    * The pairing of this body with this drivetrain as it was actually sold. It is the most precise car-type identity and owns what depends on both: seat count, official consumption, CO2 and electric range.
    */
-  configuration?: CatalogueRef;
+  configuration?: CatalogueRef & {
+    seats?: number;
+  };
   /**
    * The official EU identity of the car type (Reg. 2018/858, printed on the Certificate of Conformity and carried in national registers). Type/Variant/Version (TVV) is legal-centric, not trim-centric, so it sits beside the catalogue hierarchy rather than replacing it.
    */

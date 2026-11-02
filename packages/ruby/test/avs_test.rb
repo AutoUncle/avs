@@ -40,6 +40,11 @@ class AVSTest < Minitest::Test
     refute_empty error.errors
   end
 
+  def test_valid_is_false_for_malformed_json
+    refute AVS.valid?("{")
+    assert_raises(JSON::ParserError) { AVS.validate("{") }
+  end
+
   def test_schema_version
     assert_equal SCHEMA_VERSION, AVS.schema_version
   end
