@@ -3,7 +3,7 @@
 The [AVS](https://github.com/AutoUncle/avs) JSON Schema, `TypedDict` types and a validator.
 
 ```bash
-pip install "autouncle-avs @ git+https://github.com/AutoUncle/avs@v0.2.0#subdirectory=packages/python"
+pip install "autouncle-avs @ git+https://github.com/AutoUncle/avs@v0.3.0#subdirectory=packages/python"
 ```
 
 ```python

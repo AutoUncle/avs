@@ -11,12 +11,12 @@ AVS does not replace the standards below. Each covers part of what AVS covers. A
 | **EU Battery Passport** (Reg. 2023/1542, from Feb 2027) | Battery identity, capacity, state of health | The data model is open | `battery.passportId`, `history.batteryStateOfHealthPct` |
 | **ISO 3779 / 3780** | VIN and manufacturer-code (WMI) structure | Paid | VIN pattern. EU VINs need not carry a check digit |
 | **NHTSA vPIC** | US VIN decoder variables | Public domain | Vocabulary reference only |
-| **National registers:** RDW (NL), DMR (DK), DVLA/MOT (UK), KBA HSN/TSN (DE) | Per-plate facts, inspections with odometer readings | Mixed | `externalIds` (`kba-hsn-tsn`), `vehicle.history.events` |
+| **National registers:** RDW (NL), DMR (DK), DVLA/MOT (UK), KBA HSN/TSN (DE) | Per-plate facts, inspections with odometer readings | Mixed | `ids` scheme `kba-hsn-tsn`; `vehicle.history.events` |
 | **Listing feeds:** Google Vehicle Listings, Meta Automotive Inventory, mobile.de, AutoScout24 | What a listing must contain | The specs are public, the APIs are partner-only | Export targets |
-| **Commercial catalogues:** JATO, Autovista (Eurotax/Schwacke), DAT, CAP HPI, Chrome Data, TecDoc | Rich make → model → version → equipment hierarchies | No, and their ids are incompatible | `externalIds` |
+| **Commercial catalogues:** JATO, Autovista (Eurotax/Schwacke), DAT, CAP HPI, Chrome Data, TecDoc | Rich make → model → version → equipment hierarchies | No, and their ids are incompatible | `ids` schemes (`jato`, `schwacke`, `dat-europa-code`, …) |
 | **Catena-X / Tractus-X** (SAMM aspect models) | OEM/supplier data space, battery pass | Yes (CC-BY-4.0) | Inspiration for modular "aspects" |
 | **MOBI Vehicle Identity, W3C Verifiable Credentials** | Vehicle identity and history as signed credentials | Partly | `history.events` is kept simple enough to wrap as credentials |
-| **Wikidata** | Open brand and model items | Yes (CC0) | `externalIds` (`wikidata`) |
+| **Wikidata** | Open brand and model items | Yes (CC0) | `ids` scheme `wikidata` |
 
 ## What none of them cover
 

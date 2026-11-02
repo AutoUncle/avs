@@ -1,0 +1,26 @@
+{
+  "avs": {
+    "version": "0.3",
+    "kind": "type"
+  },
+  "identity": {
+    "brand": {
+      "name": "BMW",
+      "ids": [
+        {
+          "scheme": "autouncle",
+          "value": "b-example0001"
+        }
+      ]
+    },
+    "model": {
+      "name": "3 Series"
+    },
+    "externalIds": [
+      {
+        "scheme": "wikidata",
+        "value": "Q26678"
+      }
+    ]
+  }
+}
