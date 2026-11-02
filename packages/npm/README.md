@@ -17,4 +17,4 @@ assertAvsDocument(doc);   // throws InvalidAvsDocument listing every error
 
 The raw schema is available as `import { schema } from "@autouncle/avs"` or `@autouncle/avs/schema.json`. Works with ESM and CommonJS.
 
-The package version equals the schema release (`0.1.x` bundles schema `0.1`).
+The package version equals the schema release (`0.3.x` bundles schema `0.3`).

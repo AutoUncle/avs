@@ -30,9 +30,9 @@ export type EquipmentRef = CatalogueRef & {
    */
   variations?: string[];
   /**
-   * Type documents only, trims: drivetrain ids this trim is sold with.
+   * Type documents only, trims: the drivetrains this trim is sold with.
    */
-  drivetrains?: string[];
+  drivetrains?: CatalogueRef[];
   /**
    * Vehicle documents only: true = this car has it, false = known absent. Omit when unknown.
    */
@@ -65,7 +65,7 @@ export type Feature = CatalogueRef & {
  * Document metadata.
  */
 export interface Envelope {
-  version: "0.2";
+  version: "0.3";
   /**
    * `type` = a car type as built (no physical car). `vehicle` = one physical car, so the `vehicle` block is required. Fields that only make sense for one kind are rejected in the other.
    */
@@ -155,23 +155,21 @@ export interface Identity {
      */
     category?: string;
   };
-  /**
-   * The same car type in other code systems. Lets AVS be a hub between them.
-   */
-  externalIds?: ExternalId[];
 }
 /**
- * A pointer to one catalogue record plus a human-readable name. Left open so that levels can extend it; every place that uses it closes it with `unevaluatedProperties: false`, so unknown keys are rejected.
+ * A catalogue record: its name and its identifiers in any code systems. Left open so that levels can extend it; every place that uses it closes it with `unevaluatedProperties: false`, so unknown keys are rejected.
  */
 export interface CatalogueRef {
-  /**
-   * Stable, never-reused id of the catalogue record. Should resolve as a URI (e.g. https://avs.autouncle.com/id/<id>). Records merged into another keep redirecting to it.
-   */
-  id?: string;
   /**
    * Canonical name.
    */
   name: string;
+  /**
+   * The record's identifiers, one per code system it appears in. No scheme is privileged: AutoUncle's own catalogue is the `autouncle` scheme like any other. Two references describe the same record when they share an identifier (same scheme, value and country). A merged or renamed record keeps answering to its old identifiers in its own scheme.
+   *
+   * @minItems 1
+   */
+  ids?: [Id, ...Id[]];
   /**
    * Market-specific names, keyed by ISO 3166-1 alpha-2 country.
    */
@@ -179,12 +177,21 @@ export interface CatalogueRef {
     [k: string]: string;
   };
 }
-export interface ExternalId {
+/**
+ * One identifier of a catalogue record in one code system.
+ */
+export interface Id {
   /**
-   * Code system. Open list; well-known values shown.
+   * The code system, as a lowercase, hyphenated name. Open list; see docs/id-schemes.md for registered schemes and which level each identifies. `autouncle` is AutoUncle's catalogue (Axiom).
    */
   scheme: string;
+  /**
+   * The identifier, exactly as the code system writes it.
+   */
   value: string;
+  /**
+   * For national code systems (e.g. KBA HSN/TSN is DE): the country the value is valid in.
+   */
   country?: string;
 }
 /**

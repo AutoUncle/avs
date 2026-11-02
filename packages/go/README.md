@@ -3,7 +3,7 @@
 The [AVS](https://github.com/AutoUncle/avs) JSON Schema (embedded) and a validator.
 
 ```bash
-GOPRIVATE=github.com/AutoUncle go get github.com/AutoUncle/avs/packages/go@v0.2.0
+GOPRIVATE=github.com/AutoUncle go get github.com/AutoUncle/avs/packages/go@v0.3.0
 ```
 
 ```go

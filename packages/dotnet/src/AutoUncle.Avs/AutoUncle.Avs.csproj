@@ -4,7 +4,7 @@
     <TargetFrameworks>netstandard2.0;net8.0</TargetFrameworks>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.2.0</Version>
+    <Version>0.3.0</Version>
     <PackageId>AutoUncle.Avs</PackageId>
     <Authors>AutoUncle</Authors>
     <Description>AVS – AutoUncle Vehicle Schema: the JSON Schema and a validator.</Description>

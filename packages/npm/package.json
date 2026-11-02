@@ -1,6 +1,6 @@
 {
   "name": "@autouncle/avs",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "AVS – AutoUncle Vehicle Schema: the JSON Schema, TypeScript types and a validator",
   "license": "Apache-2.0",
   "repository": {

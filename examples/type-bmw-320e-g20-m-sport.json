@@ -1,16 +1,30 @@
 {
   "avs": {
-    "version": "0.2",
+    "version": "0.3",
     "kind": "type"
   },
   "identity": {
     "brand": {
-      "id": "b-example0001",
-      "name": "BMW"
+      "name": "BMW",
+      "ids": [
+        {
+          "scheme": "autouncle",
+          "value": "b-example0001"
+        },
+        {
+          "scheme": "wikidata",
+          "value": "Q26678"
+        }
+      ]
     },
     "model": {
-      "id": "cm-example0001",
       "name": "3 Series",
+      "ids": [
+        {
+          "scheme": "autouncle",
+          "value": "cm-example0001"
+        }
+      ],
       "localNames": {
         "DK": "3-serie"
       }
@@ -29,16 +43,26 @@
       "toYear": 2022
     },
     "body": {
-      "id": "mg-example0001",
       "name": "3 Series Sedan (G20)",
+      "ids": [
+        {
+          "scheme": "autouncle",
+          "value": "mg-example0001"
+        }
+      ],
       "type": "sedan",
       "doors": 4,
       "fromYear": 2018,
       "toYear": 2022
     },
     "drivetrain": {
-      "id": "dv-example0001",
-      "name": "320e (204 Hp) Plug-in Hybrid Steptronic"
+      "name": "320e (204 Hp) Plug-in Hybrid Steptronic",
+      "ids": [
+        {
+          "scheme": "autouncle",
+          "value": "dv-example0001"
+        }
+      ]
     },
     "configuration": {
       "name": "320e Sedan 5 seats",
@@ -129,8 +153,13 @@
   },
   "equipment": {
     "trim": {
-      "id": "ep-example0001",
       "name": "M Sport",
+      "ids": [
+        {
+          "scheme": "autouncle",
+          "value": "ep-example0001"
+        }
+      ],
       "variations": [
         "M Sportpakke",
         "M-Sport"
@@ -138,43 +167,73 @@
     },
     "options": [
       {
-        "id": "ep-example0002",
-        "name": "Driving Assistant Professional"
+        "name": "Driving Assistant Professional",
+        "ids": [
+          {
+            "scheme": "autouncle",
+            "value": "ep-example0002"
+          }
+        ]
       },
       {
-        "id": "ep-example0003",
-        "name": "Harman Kardon Surround Sound System"
+        "name": "Harman Kardon Surround Sound System",
+        "ids": [
+          {
+            "scheme": "autouncle",
+            "value": "ep-example0003"
+          }
+        ]
       }
     ],
     "features": [
       {
-        "id": "f-example0001",
         "key": "SAFETY_AEB",
         "name": "Autonomous Emergency Braking (AEB)",
+        "ids": [
+          {
+            "scheme": "autouncle",
+            "value": "f-example0001"
+          }
+        ],
         "category": "SAFETY",
         "availability": "standard",
         "viaPackage": "M Sport"
       },
       {
-        "id": "f-example0002",
         "key": "LIGHTING_HEADLIGHTS_LED",
         "name": "LED Headlights",
+        "ids": [
+          {
+            "scheme": "autouncle",
+            "value": "f-example0002"
+          }
+        ],
         "category": "LIGHTING",
         "availability": "standard",
         "viaPackage": "M Sport"
       },
       {
-        "id": "f-example0003",
         "key": "SEATS_FRONT_SPORT",
         "name": "Front Sport Seats",
+        "ids": [
+          {
+            "scheme": "autouncle",
+            "value": "f-example0003"
+          }
+        ],
         "category": "SEATS",
         "availability": "standard",
         "viaPackage": "M Sport"
       },
       {
-        "id": "f-example0004",
         "key": "CONNECTIVITY_APPLE_CARPLAY",
         "name": "Apple CarPlay",
+        "ids": [
+          {
+            "scheme": "autouncle",
+            "value": "f-example0004"
+          }
+        ],
         "category": "CONNECTIVITY",
         "availability": "standard",
         "viaPackage": "M Sport"

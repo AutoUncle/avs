@@ -3,7 +3,7 @@
 The [AVS](https://github.com/AutoUncle/avs) JSON Schema and a validator.
 
 ```ruby
-gem "autouncle-avs", "~> 0.1", source: "https://rubygems.pkg.github.com/autouncle"
+gem "autouncle-avs", "~> 0.3", source: "https://rubygems.pkg.github.com/autouncle"
 ```
 
 ```ruby
@@ -26,4 +26,4 @@ it "returns a valid AVS document" do
 end
 ```
 
-The gem version equals the schema release (`0.1.x` bundles schema `0.1`).
+The gem version equals the schema release (`0.3.x` bundles schema `0.3`).
