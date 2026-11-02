@@ -1,0 +1,21 @@
+{
+  "avs": {
+    "version": "0.3",
+    "kind": "type"
+  },
+  "identity": {
+    "brand": {
+      "name": "BMW",
+      "ids": [
+        {
+          "scheme": "wikidata",
+          "value": "Q26678",
+          "country": "DE"
+        }
+      ]
+    },
+    "model": {
+      "name": "3 Series"
+    }
+  }
+}

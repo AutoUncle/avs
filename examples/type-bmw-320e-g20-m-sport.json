@@ -163,6 +163,17 @@
       "variations": [
         "M Sportpakke",
         "M-Sport"
+      ],
+      "drivetrains": [
+        {
+          "name": "320e (204 Hp) Plug-in Hybrid Steptronic",
+          "ids": [
+            {
+              "scheme": "autouncle",
+              "value": "dv-example0001"
+            }
+          ]
+        }
       ]
     },
     "options": [

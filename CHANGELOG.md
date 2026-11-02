@@ -5,9 +5,10 @@
 Breaking: catalogue identifiers are vendor-neutral.
 
 - `id` on catalogue records is replaced by `ids`, a list of `{ scheme, value, country? }`. No scheme is privileged: AutoUncle's catalogue is the `autouncle` scheme. Two references describe the same record when they share an identifier.
-- `identity.externalIds` is removed. Its identifiers now go on the level they identify (e.g. `wikidata` on `model`, `kba-hsn-tsn` on `drivetrain`).
+- `identity.externalIds` is removed. Its identifiers now go on the level they identify (e.g. `wikidata` on `model`, `kba-hsn-tsn` on `configuration`).
 - A trim's `drivetrains` are references (name and `ids`) instead of id strings.
-- Scheme names must be lowercase and hyphenated. `docs/id-schemes.md` lists the registered schemes.
+- Scheme names must be lowercase and hyphenated. `docs/id-schemes.md` lists the registered schemes. For those, the schema enforces `country` (required with a fixed value, required per market, or not allowed) and checks the format of `kba-hsn-tsn` and `wikidata` values.
+- `ids` lists only current identifiers, at most one per scheme and country; former ones are resolved by their code system.
 
 ## 0.2.0 – draft
 

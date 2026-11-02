@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://schema.autouncle.com/avs/0.3/avs.schema.json",
   "title": "AVS – AutoUncle Vehicle Schema",
-  "description": "Draft 0.2. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.",
+  "description": "Draft 0.3. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.",
   "type": "object",
   "required": [
     "avs",
@@ -292,7 +292,7 @@
           "type": "string"
         },
         "ids": {
-          "description": "The record's identifiers, one per code system it appears in. No scheme is privileged: AutoUncle's own catalogue is the `autouncle` scheme like any other. Two references describe the same record when they share an identifier (same scheme, value and country). A merged or renamed record keeps answering to its old identifiers in its own scheme.",
+          "description": "The record's current identifiers: at most one per scheme and country. Former identifiers (from a merge or rename) are not listed; the code system keeps resolving them to the current one. No scheme is privileged: AutoUncle's own catalogue is the `autouncle` scheme like any other. Two references describe the same record when they share an identifier, meaning the same scheme, value and country. JSON Schema cannot enforce one-per-scheme, so producers must.",
           "type": "array",
           "items": {
             "$ref": "#/$defs/Id"
@@ -344,12 +344,167 @@
           "minLength": 1
         },
         "country": {
-          "description": "For national code systems (e.g. KBA HSN/TSN is DE): the country the value is valid in.",
+          "description": "The country the value is valid in. Required for national and per-market schemes, not allowed for global ones (see docs/id-schemes.md).",
           "type": "string",
           "pattern": "^[A-Z]{2}$"
         }
       },
-      "description": "One identifier of a catalogue record in one code system."
+      "description": "One identifier of a catalogue record in one code system. The key is scheme + value + country: an omitted country is part of the key, not a wildcard. Registered schemes (docs/id-schemes.md) fix whether country is required, which value it must have, and sometimes the value's format.",
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "kba-hsn-tsn"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "required": [
+              "country"
+            ],
+            "properties": {
+              "country": {
+                "const": "DE"
+              },
+              "value": {
+                "pattern": "^[0-9]{4}/[0-9A-Z]{3}$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "schwacke"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "required": [
+              "country"
+            ],
+            "properties": {
+              "country": {
+                "const": "DE"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "cap-hpi"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "required": [
+              "country"
+            ],
+            "properties": {
+              "country": {
+                "const": "GB"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "nhtsa-vpic"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "required": [
+              "country"
+            ],
+            "properties": {
+              "country": {
+                "const": "US"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "enum": [
+                  "jato",
+                  "eurotax"
+                ]
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "required": [
+              "country"
+            ]
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "enum": [
+                  "autouncle",
+                  "wikidata",
+                  "type-approval",
+                  "dat-europa-code",
+                  "tecdoc-ktype"
+                ]
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "country": false
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "scheme": {
+                "const": "wikidata"
+              }
+            },
+            "required": [
+              "scheme"
+            ]
+          },
+          "then": {
+            "properties": {
+              "value": {
+                "pattern": "^Q[1-9][0-9]*$"
+              }
+            }
+          }
+        }
+      ]
     },
     "Specification": {
       "description": "Technical facts about the car type. Units are always in the field name (kW, Nm, mm, kg, kWh, g/km) so there is never a unit field to look up.",

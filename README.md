@@ -58,7 +58,7 @@ Brand ─ (Series) ─ Model ─ Generation ─ Phase (launch / facelift)
 
 - **Units are part of the field name** (`powerKw`, `torqueNm`, `co2GKm`, `grossKwh`). Values follow EU Certificate of Conformity and WLTP conventions.
 - **Fuel is described by two fields:** `energy` (what the car burns) and `electrification` (none, mhev, fhev, phev, erev, bev, fcev).
-- **AVS has no identifiers of its own.** Every catalogue record lists its `ids` in any code system (`autouncle`, `wikidata`, `kba-hsn-tsn`, `jato`, …), and none is privileged. Two references describe the same record when they share an identifier. See [docs/id-schemes.md](docs/id-schemes.md).
+- **AVS has no identifiers of its own.** Every catalogue record lists its `ids` in any code system (`autouncle`, `wikidata`, `kba-hsn-tsn`, `jato`, …), and none is privileged. Two references describe the same record when they share an identifier (same scheme, value and country). See [docs/id-schemes.md](docs/id-schemes.md).
 - **Unknown keys are rejected** everywhere, including on catalogue references. Vendor data goes in `extensions`.
 - **VINs and plates can be personal data.** Store and share them only where that is needed and allowed.
 - **Enums are in English, snake_case.** Countries use ISO 3166-1 alpha-2, currencies ISO 4217, VINs ISO 3779.

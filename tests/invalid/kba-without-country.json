@@ -1,0 +1,23 @@
+{
+  "avs": {
+    "version": "0.3",
+    "kind": "type"
+  },
+  "identity": {
+    "brand": {
+      "name": "BMW"
+    },
+    "model": {
+      "name": "3 Series"
+    },
+    "configuration": {
+      "name": "320e Sedan",
+      "ids": [
+        {
+          "scheme": "kba-hsn-tsn",
+          "value": "0005/BLH"
+        }
+      ]
+    }
+  }
+}

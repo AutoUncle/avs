@@ -32,7 +32,7 @@ class TypeApproval(TypedDict):
 
 class Id(TypedDict):
     """
-    One identifier of a catalogue record in one code system.
+    One identifier of a catalogue record in one code system. The key is scheme + value + country: an omitted country is part of the key, not a wildcard. Registered schemes (docs/id-schemes.md) fix whether country is required, which value it must have, and sometimes the value's format.
     """
 
     scheme: str
@@ -538,7 +538,7 @@ class Equipment(TypedDict):
 
 class AvsDocument(TypedDict):
     """
-    Draft 0.2. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.
+    Draft 0.3. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.
     """
 
     avs: Envelope
