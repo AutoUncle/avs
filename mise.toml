@@ -1,0 +1,7 @@
+[tools]
+ruby = "3.4"
+node = "22"
+python = "3.12"
+uv = "latest"
+go = "1.24"
+java = "temurin-17"

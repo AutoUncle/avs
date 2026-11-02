@@ -72,9 +72,34 @@ scripts/check-invalid.sh   # every tests/invalid/*.json must be rejected
 
 CI runs all three on every push and pull request.
 
+## Packages
+
+Each package bundles the schema and a validator that returns every error with a JSON Pointer to it (`/vehicle/vin: …`). They are thin on purpose: they are generated or copied from `schema/`, never hand-written models. Each package's README has install and usage notes.
+
+| Language | Package | Import | Types | Published to |
+|---|---|---|---|---|
+| Ruby | `autouncle-avs` | `AVS.validate(doc)` | – | GitHub Packages |
+| TypeScript / JavaScript | `@autouncle/avs` | `validate(doc)` | `AvsDocument` (generated) | GitHub Packages |
+| Python | `autouncle-avs` | `avs.validate(doc)` | `AvsDocument` TypedDict (generated) | Wheel on the GitHub Release |
+| Go | `github.com/AutoUncle/avs/packages/go` | `avs.Validate(b)` | – | Tag `packages/go/vX.Y.Z` |
+| Java / JVM | `com.autouncle:avs` | `Avs.validate(json)` | – | GitHub Packages |
+| .NET | `AutoUncle.Avs` | `AvsSchema.Validate(json)` | – | GitHub Packages |
+| PHP | `autouncle/avs` | `Avs::validate($doc)` | – | Composer, from the repository tag |
+
+Every package's tests check the examples (must pass), `tests/invalid/` (must fail) and that its schema version matches `VERSION`. CI runs each language on every push and pull request.
+
+**After changing `schema/` or `VERSION`, run `scripts/sync`.** It copies the schema and version into every package and regenerates the TypeScript and Python types. CI fails if a package is out of sync. You need node, uv and `npm ci` in `packages/npm`.
+
+## Releasing
+
+1. Set `VERSION`, update `CHANGELOG.md`, run `scripts/sync`, and merge.
+2. Tag the merge commit `vX.Y.Z` (it must match `VERSION`) and push the tag. The release workflow publishes every package.
+
+Dependabot opens weekly grouped updates for each package's dependencies and for GitHub Actions.
+
 ## Versioning
 
-AVS follows [semantic versioning](https://semver.org). Releases are git tags (`v0.1.0`), and consumers should pin a tag.
+AVS follows [semantic versioning](https://semver.org). Releases are git tags (`v0.1.0`), and consumers should pin a tag. Every package's version equals the schema's.
 
 - **Patch:** descriptions, examples and docs change. Every valid document stays valid.
 - **Minor:** new optional fields or enum values are added. Every valid document stays valid.

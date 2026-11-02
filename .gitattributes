@@ -1,0 +1,8 @@
+# Keep the Composer (PHP) dist archive small: it only needs schema/, packages/php/ and composer.json.
+/packages/ruby export-ignore
+/packages/npm export-ignore
+/packages/python export-ignore
+/packages/go export-ignore
+/packages/java export-ignore
+/packages/dotnet export-ignore
+/.github export-ignore
