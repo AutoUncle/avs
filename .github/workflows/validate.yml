@@ -12,8 +12,8 @@ jobs:
   schema:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
       - run: pip install check-jsonschema==0.29.4
@@ -27,11 +27,11 @@ jobs:
   packages-in-sync:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
-      - uses: astral-sh/setup-uv@v5
+      - uses: astral-sh/setup-uv@v7
       - run: npm ci
         working-directory: packages/npm
       - run: scripts/sync
@@ -47,7 +47,7 @@ jobs:
       run:
         working-directory: packages/ruby
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -61,8 +61,8 @@ jobs:
       run:
         working-directory: packages/npm
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
       - run: npm ci
@@ -78,8 +78,8 @@ jobs:
       run:
         working-directory: packages/python
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v5
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
       - run: uv run --python ${{ matrix.python }} --group dev pytest -q
 
   go:
@@ -88,8 +88,8 @@ jobs:
       run:
         working-directory: packages/go
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
         with:
           go-version-file: packages/go/go.mod
           cache-dependency-path: packages/go/go.sum
@@ -102,8 +102,8 @@ jobs:
       run:
         working-directory: packages/java
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: "17"
@@ -116,8 +116,8 @@ jobs:
       run:
         working-directory: packages/dotnet
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-dotnet@v6
         with:
           dotnet-version: "8.0.x"
       - run: dotnet test tests/AutoUncle.Avs.Tests
@@ -129,7 +129,7 @@ jobs:
       matrix:
         php: ["8.1", "8.4"]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php }}
