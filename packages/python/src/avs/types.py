@@ -30,17 +30,11 @@ class TypeApproval(TypedDict):
     category: NotRequired[str]
 
 
-class CatalogueRef(TypedDict):
+class Id(TypedDict):
     """
-    A pointer to one catalogue record plus a human-readable name. Left open so that levels can extend it; every place that uses it closes it with `unevaluatedProperties: false`, so unknown keys are rejected.
+    One identifier of a catalogue record in one code system. The key is scheme + value + country: an omitted country is part of the key, not a wildcard. Registered schemes (docs/id-schemes.md) fix whether country is required, which value it must have, and sometimes the value's format.
     """
 
-    id: NotRequired[str]
-    name: str
-    localNames: NotRequired[Dict[str, str]]
-
-
-class ExternalId(TypedDict):
     scheme: str
     value: str
     country: NotRequired[str]
@@ -196,26 +190,6 @@ class Efficiency(TypedDict):
     electricKwh100km: NotRequired[float]
     electricRangeKm: NotRequired[int]
     co2GKm: NotRequired[int]
-
-
-class EquipmentRef(CatalogueRef):
-    """
-    A trim, package or option by name, optionally pointing to its catalogue record.
-    """
-
-    variations: NotRequired[List[str]]
-    drivetrains: NotRequired[List[str]]
-    fitted: NotRequired[bool]
-
-
-class Feature(CatalogueRef):
-    key: str
-    category: NotRequired[str]
-    brandName: NotRequired[str]
-    availability: NotRequired[
-        Literal['standard', 'optional', 'fitted', 'absent', 'unknown']
-    ]
-    viaPackage: NotRequired[str]
 
 
 class Registration(TypedDict):
@@ -382,6 +356,112 @@ class VehicleEquipmentRef(TypedDict):
     drivetrains: NotRequired[Any]
 
 
+class CatalogueRef(TypedDict):
+    """
+    A catalogue record: its name and its identifiers in any code systems. Left open so that levels can extend it; every place that uses it closes it with `unevaluatedProperties: false`, so unknown keys are rejected.
+    """
+
+    name: str
+    ids: NotRequired[List[Id]]
+    localNames: NotRequired[Dict[str, str]]
+
+
+class Body1(TypedDict):
+    type: NotRequired[BodyType]
+    doors: NotRequired[int]
+    seats: NotRequired[int]
+    driveSide: NotRequired[Literal['left', 'right']]
+
+
+class Specification(TypedDict):
+    """
+    Technical facts about the car type. Units are always in the field name (kW, Nm, mm, kg, kWh, g/km) so there is never a unit field to look up.
+    """
+
+    body: NotRequired[Body1]
+    powertrain: NotRequired[Powertrain]
+    battery: NotRequired[Battery]
+    performance: NotRequired[Performance]
+    efficiency: NotRequired[List[Efficiency]]
+    realWorldRange: NotRequired[RealWorldRange]
+    emissionStandard: NotRequired[str]
+    dimensions: NotRequired[Dimensions]
+    weights: NotRequired[Weights]
+    wheels: NotRequired[Wheels]
+    charging: NotRequired[Charging]
+    safety: NotRequired[Safety]
+    environmentalLabels: NotRequired[List[EnvironmentalLabel]]
+    segment: NotRequired[List[CatalogueRef]]
+
+
+class EquipmentRef(CatalogueRef):
+    """
+    A trim, package or option by name, optionally pointing to its catalogue record.
+    """
+
+    variations: NotRequired[List[str]]
+    drivetrains: NotRequired[List[CatalogueRef]]
+    fitted: NotRequired[bool]
+
+
+class Feature(CatalogueRef):
+    key: str
+    category: NotRequired[str]
+    brandName: NotRequired[str]
+    availability: NotRequired[
+        Literal['standard', 'optional', 'fitted', 'absent', 'unknown']
+    ]
+    viaPackage: NotRequired[str]
+
+
+class Vehicle(TypedDict):
+    """
+    One physical car. Everything here can differ between two cars of the same drivetrain.
+    """
+
+    vin: NotRequired[str]
+    registration: NotRequired[Registration]
+    odometer: NotRequired[Odometer]
+    colour: NotRequired[Colour]
+    interior: NotRequired[Interior]
+    condition: NotRequired[Condition]
+    history: NotRequired[History]
+    warranty: NotRequired[Warranty]
+    originalListPrice: NotRequired[Money]
+
+
+class Equipment1(TypedDict):
+    trim: NotRequired[TypeEquipmentRef]
+    packages: NotRequired[List[TypeEquipmentRef]]
+    options: NotRequired[List[TypeEquipmentRef]]
+    features: NotRequired[List[Feature1]]
+
+
+class TypeDocumentRules(TypedDict):
+    """
+    What a `type` document may not contain: anything about one physical car.
+    """
+
+    vehicle: NotRequired[Any]
+    equipment: NotRequired[Equipment1]
+    specification: NotRequired[Specification1]
+
+
+class Equipment2(TypedDict):
+    trim: NotRequired[VehicleEquipmentRef]
+    packages: NotRequired[List[VehicleEquipmentRef]]
+    options: NotRequired[List[VehicleEquipmentRef]]
+    features: NotRequired[List[Feature2]]
+
+
+class VehicleDocumentRules(TypedDict):
+    """
+    What a `vehicle` document must and may not contain: it describes one physical car, so it has a `vehicle` block and no catalogue matching data.
+    """
+
+    equipment: NotRequired[Equipment2]
+
+
 class Generation(CatalogueRef):
     """
     A generation of the model, e.g. 'Golf VII' or 'G20/G21', with an envelope year range covering all its bodies. Holds no body or engine data.
@@ -443,35 +523,6 @@ class Identity(TypedDict):
     drivetrain: NotRequired[CatalogueRef]
     configuration: NotRequired[Configuration]
     typeApproval: NotRequired[TypeApproval]
-    externalIds: NotRequired[List[ExternalId]]
-
-
-class Body1(TypedDict):
-    type: NotRequired[BodyType]
-    doors: NotRequired[int]
-    seats: NotRequired[int]
-    driveSide: NotRequired[Literal['left', 'right']]
-
-
-class Specification(TypedDict):
-    """
-    Technical facts about the car type. Units are always in the field name (kW, Nm, mm, kg, kWh, g/km) so there is never a unit field to look up.
-    """
-
-    body: NotRequired[Body1]
-    powertrain: NotRequired[Powertrain]
-    battery: NotRequired[Battery]
-    performance: NotRequired[Performance]
-    efficiency: NotRequired[List[Efficiency]]
-    realWorldRange: NotRequired[RealWorldRange]
-    emissionStandard: NotRequired[str]
-    dimensions: NotRequired[Dimensions]
-    weights: NotRequired[Weights]
-    wheels: NotRequired[Wheels]
-    charging: NotRequired[Charging]
-    safety: NotRequired[Safety]
-    environmentalLabels: NotRequired[List[EnvironmentalLabel]]
-    segment: NotRequired[List[CatalogueRef]]
 
 
 class Equipment(TypedDict):
@@ -485,57 +536,9 @@ class Equipment(TypedDict):
     features: NotRequired[List[Feature]]
 
 
-class Vehicle(TypedDict):
-    """
-    One physical car. Everything here can differ between two cars of the same drivetrain.
-    """
-
-    vin: NotRequired[str]
-    registration: NotRequired[Registration]
-    odometer: NotRequired[Odometer]
-    colour: NotRequired[Colour]
-    interior: NotRequired[Interior]
-    condition: NotRequired[Condition]
-    history: NotRequired[History]
-    warranty: NotRequired[Warranty]
-    originalListPrice: NotRequired[Money]
-
-
-class Equipment1(TypedDict):
-    trim: NotRequired[TypeEquipmentRef]
-    packages: NotRequired[List[TypeEquipmentRef]]
-    options: NotRequired[List[TypeEquipmentRef]]
-    features: NotRequired[List[Feature1]]
-
-
-class TypeDocumentRules(TypedDict):
-    """
-    What a `type` document may not contain: anything about one physical car.
-    """
-
-    vehicle: NotRequired[Any]
-    equipment: NotRequired[Equipment1]
-    specification: NotRequired[Specification1]
-
-
-class Equipment2(TypedDict):
-    trim: NotRequired[VehicleEquipmentRef]
-    packages: NotRequired[List[VehicleEquipmentRef]]
-    options: NotRequired[List[VehicleEquipmentRef]]
-    features: NotRequired[List[Feature2]]
-
-
-class VehicleDocumentRules(TypedDict):
-    """
-    What a `vehicle` document must and may not contain: it describes one physical car, so it has a `vehicle` block and no catalogue matching data.
-    """
-
-    equipment: NotRequired[Equipment2]
-
-
 class AvsDocument(TypedDict):
     """
-    Draft 0.2. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.
+    Draft 0.3. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.
     """
 
     avs: Envelope

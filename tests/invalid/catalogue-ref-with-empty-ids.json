@@ -1,0 +1,15 @@
+{
+  "avs": {
+    "version": "0.3",
+    "kind": "type"
+  },
+  "identity": {
+    "brand": {
+      "name": "BMW",
+      "ids": []
+    },
+    "model": {
+      "name": "3 Series"
+    }
+  }
+}

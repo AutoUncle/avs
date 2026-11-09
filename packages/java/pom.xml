@@ -6,7 +6,7 @@
 
   <groupId>com.autouncle</groupId>
   <artifactId>avs</artifactId>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <name>AVS – AutoUncle Vehicle Schema</name>
   <description>The AVS JSON Schema and a validator.</description>
   <url>https://github.com/AutoUncle/avs</url>

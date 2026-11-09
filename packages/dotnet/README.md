@@ -4,7 +4,7 @@ The [AVS](https://github.com/AutoUncle/avs) JSON Schema and a validator. Targets
 
 ```bash
 dotnet nuget add source https://nuget.pkg.github.com/AutoUncle/index.json --name autouncle
-dotnet add package AutoUncle.Avs --version 0.2.0
+dotnet add package AutoUncle.Avs --version 0.3.0
 ```
 
 ```csharp

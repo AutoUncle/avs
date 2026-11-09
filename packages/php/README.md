@@ -4,7 +4,7 @@ The [AVS](https://github.com/AutoUncle/avs) JSON Schema and a validator. PHP 8.1
 
 ```json
 "repositories": [{ "type": "vcs", "url": "https://github.com/AutoUncle/avs" }],
-"require": { "autouncle/avs": "^0.2" }
+"require": { "autouncle/avs": "^0.3" }
 ```
 
 ```php
