@@ -16,6 +16,10 @@ updates:
     directory: /packages/npm
     schedule: { interval: weekly }
     groups: { npm: { patterns: ["*"] } }
+    # tsup's dts build calls the TypeScript JS API, which TypeScript 7 (native) no longer ships.
+    ignore:
+      - dependency-name: typescript
+        versions: [">=7"]
 
   - package-ecosystem: pip
     directory: /packages/python

@@ -4,8 +4,6 @@
  * Draft 0.3. AVS describes a car: the facts about it, never how they were obtained or what someone thinks it is worth. A document has up to four layers: WHAT car type it is (identity), HOW it is built (specification), WHAT it is equipped with (equipment) and, for one physical car, WHICH car it is and what has happened to it (vehicle). A car-type document (e.g. 'BMW 320e G20 Sedan M Sport') omits `vehicle`. Context such as listings, valuations, data provenance or match confidence belongs in companion schemas that reference an AVS document.
  */
 export type AvsDocument = {
-  [k: string]: unknown;
-} & {
   avs: Envelope;
   identity: Identity;
   specification?: Specification;
@@ -20,20 +18,6 @@ export type AvsDocument = {
  * One identifier of a catalogue record in one code system. The key is scheme + value + country: an omitted country is part of the key, not a wildcard. Registered schemes (docs/id-schemes.md) fix whether country is required, which value it must have, and sometimes the value's format.
  */
 export type Id = {
-  [k: string]: unknown;
-} & {
-  [k: string]: unknown;
-} & {
-  [k: string]: unknown;
-} & {
-  [k: string]: unknown;
-} & {
-  [k: string]: unknown;
-} & {
-  [k: string]: unknown;
-} & {
-  [k: string]: unknown;
-} & {
   /**
    * The code system, as a lowercase, hyphenated name. Open list; see docs/id-schemes.md for registered schemes and which level each identifies. `autouncle` is AutoUncle's catalogue (Axiom).
    */
