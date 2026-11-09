@@ -1,19 +1,19 @@
 package com.autouncle.avs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.networknt.schema.JsonSchema;
-import com.networknt.schema.JsonSchemaFactory;
-import com.networknt.schema.PathType;
-import com.networknt.schema.SchemaValidatorsConfig;
-import com.networknt.schema.SpecVersion;
+import com.networknt.schema.Schema;
+import com.networknt.schema.SchemaRegistry;
+import com.networknt.schema.SchemaRegistryConfig;
+import com.networknt.schema.SpecificationVersion;
+import com.networknt.schema.path.PathType;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Comparator;
 import java.util.List;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.ObjectMapper;
 
 /**
  * AVS – AutoUncle Vehicle Schema.
@@ -28,15 +28,16 @@ public final class Avs {
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static final String SCHEMA_JSON = readSchema();
     private static final JsonNode SCHEMA_NODE = parse(SCHEMA_JSON);
-    private static final JsonSchema SCHEMA = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V202012)
-            .getSchema(SCHEMA_NODE, SchemaValidatorsConfig.builder()
-                    .formatAssertionsEnabled(true)
-                    .pathType(PathType.JSON_POINTER)
-                    .build());
+    private static final Schema SCHEMA = SchemaRegistry.withDefaultDialect(SpecificationVersion.DRAFT_2020_12,
+                    builder -> builder.schemaRegistryConfig(SchemaRegistryConfig.builder()
+                            .formatAssertionsEnabled(true)
+                            .pathType(PathType.JSON_POINTER)
+                            .build()))
+            .getSchema(SCHEMA_NODE);
 
     /** The schema's own version, e.g. "0.2" (what documents put in {@code avs.version}). */
     public static final String SCHEMA_VERSION =
-            SCHEMA_NODE.at("/$defs/Envelope/properties/version/const").asText();
+            SCHEMA_NODE.at("/$defs/Envelope/properties/version/const").asString();
 
     private Avs() {}
 
@@ -57,7 +58,7 @@ public final class Avs {
     /** Returns every validation error for an already parsed document. */
     public static List<ValidationError> validate(JsonNode document) {
         return SCHEMA.validate(document).stream()
-                .map(m -> new ValidationError(m.getInstanceLocation().toString(), stripLocation(m.getMessage())))
+                .map(e -> new ValidationError(e.getInstanceLocation().toString(), e.getMessage()))
                 .distinct()
                 .sorted(Comparator.comparing(ValidationError::pointer).thenComparing(ValidationError::message))
                 .toList();
@@ -79,17 +80,10 @@ public final class Avs {
         }
     }
 
-    // The validator prefixes each message with the instance location; we report that separately.
-    private static String stripLocation(String message) {
-        int colon = message.indexOf(": ");
-        boolean prefixed = colon >= 0 && (message.startsWith("/") || message.startsWith("$") || colon == 0);
-        return prefixed ? message.substring(colon + 2) : message;
-    }
-
     private static JsonNode parse(String json) {
         try {
             return MAPPER.readTree(json);
-        } catch (JsonProcessingException e) {
+        } catch (JacksonException e) {
             throw new IllegalArgumentException("Document is not JSON: " + e.getOriginalMessage(), e);
         }
     }
